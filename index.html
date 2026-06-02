@@ -107,9 +107,10 @@
         /* Specific Layout Helpers */
         .wide { grid-column: span 2; }
         .tall { grid-row: span 2; }
+        .large { grid-column: span 2; grid-row: span 2; }
 
         @media (max-width: 850px) {
-            .wide, .tall { grid-column: span 1; grid-row: span 1; }
+            .wide, .tall, .large { grid-column: span 1; grid-row: span 1; }
         }
 
         /* Decorative Header */
@@ -417,6 +418,26 @@
     </section>
 
     <div class="grid-container">
+        <div class="window" data-tech="Unreal Engine 5, C++, Blueprints" data-role="Lead Programmer, Lighting Artist" data-team-size="22"
+         data-full-desc="Our Hallowed Dark is a huge first person horror game that is inspired by games like Outer Wilds and
+        Soma. I worked on this game as a lead programmer as well as a lighting artist. I was responsible for quite a few aspects of the game but not so much the design.
+        This project taught me how to work in a big team on a project with a lot of interlocking systems. I also here created gameplay systems to support both mouse and keyboard as well as
+        controller seamlessly. I also got excited about optimizing UE5 so I worked on getting the game running well on the Steam Deck! Most of the screenshots in the gallery are
+        actually from the Deck version of the game! We have Lumen and Megalights running there and it runs and looks great!"
+        data-game-link="https://joajii.itch.io/our-hallowed-dark"
+        data-video-link="">
+            <div class="window-header">
+                <div class="project-title">Our Hallowed Dark</div>
+                <div class="project-desc">A huge first person horror game inspired by games like Outer Wilds and Soma.</div>
+            </div>
+            <div class="project-image-wrap">
+                <img src="assets/img/portfolio/HALLOWED1.png" alt="Our Hallowed Dark image 1">
+                <img src="assets/img/portfolio/HALLOWED2.png" alt="Our Hallowed Dark image 2">
+                <img src="assets/img/portfolio/HALLOWED3.png" alt="Our Hallowed Dark image 3">
+                <img src="assets/img/portfolio/HALLOWED4.png" alt="Our Hallowed Dark image 4">
+                <img src="assets/img/portfolio/HALLOWED5.png" alt="Our Hallowed Dark image 5">
+            </div>
+        </div>
 
         <div class="window wide" data-tech="Unreal Engine 5, C++, Blueprints" data-role="Lead Programmer, Lighting Artist, Tech Artist" data-team-size="8" data-full-desc="THAUMATROPE is an ambitious horror game built in Unreal Engine 5 for Game Project 1 at Aalto University. I worked as a lead programmer and worked on a variety of systems including tools to help the artist. I was also the lighting artist for the game working with Ray Tracing and PBR materials to enhance the atmosphere."
         data-game-link="https://michlau.itch.io/thaumatrope"
