@@ -135,6 +135,53 @@
             font-size: 1.4rem;
         }
 
+        /* Showcase Video */
+        .showcase-section {
+            max-width: 1300px;
+            margin: 0 auto 40px auto;
+            border: 1px solid var(--border-color);
+            background: var(--window-bg);
+        }
+
+        .showcase-title {
+            display: flex;
+            width: 100%;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 20px;
+            color: var(--accent-green);
+            font-size: 1.1rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-align: left;
+            text-transform: uppercase;
+        }
+
+        .showcase-replay-label {
+            display: none;
+        }
+
+        .showcase-section.is-minimized .showcase-title {
+            cursor: pointer;
+        }
+
+        .showcase-section.is-minimized .showcase-replay-label {
+            display: inline;
+        }
+
+        .showcase-section.is-minimized .showcase-video {
+            display: none;
+        }
+
+        .showcase-video {
+            display: block;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            object-fit: cover;
+            background: #000;
+            border-top: 1px solid var(--border-color);
+        }
+
         /* About Section */
         .about-section {
             max-width: 1300px;
@@ -403,6 +450,17 @@
         <div>2026 // PORTFOLIO</div>
     </nav>
 
+    <section class="showcase-section" aria-labelledby="showcase-title" hidden>
+        <button class="showcase-title" id="showcase-title" type="button" aria-expanded="true">
+            <span>Showreel</span>
+            <span class="showcase-replay-label">Replay</span>
+        </button>
+        <video class="showcase-video" controls muted playsinline preload="metadata" poster="assets/img/portfolio/HALLOWED1.png">
+            <source src="assets/video/showreel.mp4" type="video/mp4">
+            Your browser does not support MP4 video.
+        </video>
+    </section>
+
     <section class="about-section">
         <div class="about-content">
             <h1 class="about-title">ABOUT</h1>
@@ -512,7 +570,8 @@
         It was really lovely to work on such simple mechanics to focus on the game feel part. I also loved seeing people play this game and figure out our puzzles! 
         
         Godot was excellently suited for this game."
-         data-game-link="https://norppalia.itch.io/lunaire">
+         data-game-link="https://norppalia.itch.io/lunaire"
+         data-video-link="https://youtu.be/nBd9meMEFNc">
             <div class="window-header">
                 <div class="project-title">Lunaire</div>
                 <div class="project-desc">Point and click adventure game with a poignant message and engaging puzzle design.</div>
@@ -547,7 +606,8 @@
         
         I made this game very economically, using a lot of premade libraries and assets to help create something poignant fast. I used Godot and experimented also with some
         baked lighting tech to try and make the game really fast. I also had to do some file size optimization to fit all of this into the browser version."
-        data-game-link="https://mikaelgustafsson.itch.io/worrier">
+        data-game-link="https://mikaelgustafsson.itch.io/worrier"
+        data-video-link="https://youtu.be/sBSpdd2y7tI">
             <div class="window-header">
                 <div class="project-title">[worrier]</div>
                 <div class="project-desc">Short first person adventure platformer that deals with mental health themes</div>
@@ -635,19 +695,39 @@
             
             <div style="display: flex; gap: 15px; flex-wrap: wrap;">
                 <a href="#" id="modalGameLink" target="_blank" class="game-link-btn" style="display: none;">PLAY GAME // VIEW PROJECT</a>
-                <a href="#" id="modalVideoLink" target="_blank" class="game-link-btn" style="display: none;">WATCH VIDEO</a>
             </div>
         </div>
     </div>
 
     <script>
+        const showcase = document.querySelector('.showcase-section');
+        const showcaseTitle = document.querySelector('.showcase-title');
+        const showcaseVideo = document.querySelector('.showcase-video');
+
+        showcaseVideo.addEventListener('loadedmetadata', () => {
+            showcase.hidden = false;
+        });
+
+        showcaseVideo.addEventListener('ended', () => {
+            showcase.classList.add('is-minimized');
+            showcaseTitle.setAttribute('aria-expanded', 'false');
+        });
+
+        showcaseTitle.addEventListener('click', () => {
+            if (!showcase.classList.contains('is-minimized')) return;
+
+            showcase.classList.remove('is-minimized');
+            showcaseTitle.setAttribute('aria-expanded', 'true');
+            showcaseVideo.currentTime = 0;
+            showcaseVideo.play().catch(() => {});
+        });
+
         // Modal Logic
         const modal = document.getElementById('projectModal');
         const closeModal = document.getElementById('closeModal');
         const modalTitle = document.getElementById('modalTitle');
         const modalText = document.getElementById('modalText');
         const modalGameLink = document.getElementById('modalGameLink');
-        const modalVideoLink = document.getElementById('modalVideoLink');
         
         const modalMeta = document.getElementById('modalMeta');
         const metaTechWrap = document.getElementById('metaTechWrap');
@@ -719,6 +799,24 @@
                 modalGallery.innerHTML = ''; // clear old
                 mediaElements = [];
                 currentMediaIndex = 0;
+
+                if (videoLink) {
+                    const videoUrl = new URL(videoLink);
+                    const videoId = videoUrl.hostname === 'youtu.be'
+                        ? videoUrl.pathname.slice(1)
+                        : videoUrl.searchParams.get('v');
+
+                    if (videoId) {
+                        const videoFrame = document.createElement('iframe');
+                        videoFrame.src = `https://www.youtube.com/embed/${encodeURIComponent(videoId)}?enablejsapi=1&autoplay=1`;
+                        videoFrame.title = `${title} video`;
+                        videoFrame.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+                        videoFrame.referrerPolicy = 'strict-origin-when-cross-origin';
+                        videoFrame.allowFullscreen = true;
+                        modalGallery.appendChild(videoFrame);
+                        mediaElements.push(videoFrame);
+                    }
+                }
 
                 sourceMedia.forEach(media => {
                     let clone;
@@ -807,43 +905,25 @@
                 } else {
                     modalGameLink.style.display = 'none';
                 }
-
-                if (videoLink) {
-                    modalVideoLink.href = videoLink;
-                    modalVideoLink.style.display = 'inline-block';
-                } else {
-                    modalVideoLink.style.display = 'none';
-                }
                 
                 modal.classList.add('active');
             });
         });
 
-        // Close modal when clicking the close button
-        closeModal.addEventListener('click', () => {
+        function closeProjectModal() {
             modal.classList.remove('active');
-            mediaElements.forEach(m => { 
-                if(m.tagName === 'VIDEO') m.pause(); 
-                if(m.tagName === 'IFRAME') {
-                     if(m.contentWindow) {
-                        m.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
-                     }
-                }
-            });
-        });
+            modalGallery.replaceChildren();
+            mediaElements = [];
+            currentMediaIndex = 0;
+        }
+
+        // Close modal when clicking the close button
+        closeModal.addEventListener('click', closeProjectModal);
 
         // Close modal when clicking outside the content
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
-                modal.classList.remove('active');
-                mediaElements.forEach(m => { 
-                    if(m.tagName === 'VIDEO') m.pause(); 
-                    if(m.tagName === 'IFRAME') {
-                         if(m.contentWindow) {
-                            m.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
-                         }
-                    }
-                });
+                closeProjectModal();
             }
         });
     </script>
